@@ -7,15 +7,32 @@ class TriageEnv(gym.Env):
         super(TriageEnv, self).__init__()
         self.action_space = spaces.Discrete(3)  # 0 = Low, 1 = Medium, 2 = High priority
         self.observation_space = spaces.Box(low=0, high=1, shape=(5,), dtype=np.float32)
+        self.max_steps = 20
+        self.current_step = 0
 
     def reset(self):
+        self.current_step = 0
         self.state = np.random.rand(5)
         return self.state
 
     def step(self, action):
-        reward = 1 if action == self._ideal_priority(self.state) else -1
-        self.state = np.random.rand(5)
-        done = False
+        ideal = self._ideal_priority(self.state)
+
+        if action == ideal:
+            reward = 10
+            done = True
+        elif abs(action - ideal) == 1:
+            reward = -1
+            done = False
+        else:
+            reward = -10
+            done = False
+
+        self.current_step += 1
+        if self.current_step >= self.max_steps:
+            done = True
+
+        self.state = np.random.rand(5) if not done else self.state
         return self.state, reward, done, {}
 
     def _ideal_priority(self, state):
@@ -25,3 +42,11 @@ class TriageEnv(gym.Env):
             return 1
         else:
             return 0
+        
+    def step(self, action):
+        reward = 1 if action == self._ideal_priority(self.state) else -1
+        self.current_step += 1
+        done = reward == 1 and self.current_step >= 10  # Allow at least 10 steps
+        self.state = np.random.rand(5)
+        return self.state, reward, done, {}
+

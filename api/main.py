@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import numpy as np
-from agent.agent import SimpleQLearningAgent
-from env.triage_env import TriageEnv
+from ..agent.agent import SimpleQLearningAgent
+from ..env.triage_env import TriageEnv
 
 app = FastAPI()
 env = TriageEnv()
