@@ -6,7 +6,7 @@ from ..env.triage_env import TriageEnv
 
 app = FastAPI()
 env = TriageEnv()
-agent = SimpleQLearningAgent(state_size=5, action_size=3)
+agent = SimpleQLearningAgent(action_size=3)
 
 class TriageRequest(BaseModel):
     symptoms: list

@@ -17,7 +17,6 @@ class TriageEnv(gym.Env):
 
     def step(self, action):
         ideal = self._ideal_priority(self.state)
-
         if action == ideal:
             reward = 10
             done = True
@@ -35,6 +34,7 @@ class TriageEnv(gym.Env):
         self.state = np.random.rand(5) if not done else self.state
         return self.state, reward, done, {}
 
+
     def _ideal_priority(self, state):
         if state[0] > 0.7 or state[1] > 0.8:
             return 2
@@ -42,11 +42,4 @@ class TriageEnv(gym.Env):
             return 1
         else:
             return 0
-        
-    def step(self, action):
-        reward = 1 if action == self._ideal_priority(self.state) else -1
-        self.current_step += 1
-        done = reward == 1 and self.current_step >= 10  # Allow at least 10 steps
-        self.state = np.random.rand(5)
-        return self.state, reward, done, {}
 
